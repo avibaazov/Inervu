@@ -4,12 +4,15 @@ import { google } from "@ai-sdk/google";
 import { db } from "@/firebase/admin";
 import { getRandomInterviewCover } from "@/lib/utils";
 
-export async function GET() {
-  return Response.json({ status: true, data: "thank you" }, { status: 200 });
-}
-
 export async function POST(request: Request) {
-  const { type, role, level, techstack, amount, userid } = await request.json();
+  const body = await request.json();
+  console.log("BODY RECEIVED FROM VAPI:", body);
+
+  const { type, role, level, techstack, amount } = body;
+  const userid = body.userid?.trim(); // <-- clean it
+
+  console.log("userid:", userid);
+  console.log("🔁 HEADERS:", request.headers);
 
   try {
     const { text: questions } = await generateText({
@@ -28,7 +31,7 @@ export async function POST(request: Request) {
         Thank you! <3
     `,
     });
-
+    console.log(questions);
     const interview = {
       role: role,
       type: type,
@@ -45,7 +48,14 @@ export async function POST(request: Request) {
 
     return Response.json({ success: true }, { status: 200 });
   } catch (error) {
-    console.error("Error:", error);
-    return Response.json({ success: false, error: error }, { status: 500 });
+    console.error("❌ Error:", error);
+    return Response.json(
+      { success: false, error: String(error) },
+      { status: 500 },
+    );
   }
+}
+
+export async function GET() {
+  return Response.json({ success: true, data: "Thank you!" }, { status: 200 });
 }

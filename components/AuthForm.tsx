@@ -16,7 +16,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "@/firebase/client";
-import { signIn, signUp } from "@/lib/auth.action";
+import { signIn, signUp } from "@/lib/actions/auth.action";
 
 const AuthFormSchema = (type: FormType) => {
   return z.object({
